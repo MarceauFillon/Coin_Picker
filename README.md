@@ -4,6 +4,7 @@ Projects for 3 students in Barcelona which consists in the combination of a turt
 
 ### Prerequisites
 
+First, clone this project in you catkin workspace and do catkin_make
 Some packages are needed to run this project. Please run the following bash file, prevent at the project root.
 
 ```
@@ -29,6 +30,11 @@ source devel/setup.bash
 
 * Ros kinetic
 * Gazebo
+
+## Dependencies
+
+* Scara_cpe_gazebo: rospy, std_msg
+* Scara_cpe_description: control_msgs, dynamixel_controllers, dynamixel_msgs, rospy,serial, std_msgs, trajectory_msgs
 
 ## Authors
 
