@@ -1,0 +1,16 @@
+<launch>
+  <arg name="base"/>
+  <arg name="stacks"/>
+  <arg name="3d_sensor"/>
+  <arg name="gui" default="true"/>
+
+
+
+  <param name="camera_description"
+    command="$(find xacro)/xacro --inorder '$(find scara_cpe_description)/urdf/camera_top_table.urdf.xacro'" />
+
+  <!-- Gazebo model spawner -->
+  <node name="spawn_camera_model" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-urdf -param camera_description -model camera -x 1.656235 -y -0.801825 -z 1.147801 -P 1.570000"/>
+
+</launch>

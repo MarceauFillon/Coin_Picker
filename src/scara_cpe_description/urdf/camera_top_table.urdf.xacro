@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<robot name="camera" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:property name="cameraSize" value="0.05"/>
+<xacro:property name="cameraMass" value="0.5"/>
+
+ <xacro:include filename="$(find scara_cpe_description)/urdf/camera.gazebo" />
+ <xacro:include filename="$(find scara_cpe_description)/urdf/materials.xacro" />
+ <xacro:include filename="$(find scara_cpe_description)/urdf/macros.xacro" />
+
+ <link name="camera_top_link">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+    </geometry>
+    <material name="blue"/>
+  </visual>
+
+  <inertial>
+    <mass value="${cameraMass}" />
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+  </inertial>
+</link>
+
+
+</robot>
