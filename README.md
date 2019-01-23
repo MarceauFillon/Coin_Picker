@@ -4,7 +4,7 @@ Projects for 3 students in Barcelona which consists in the combination of a turt
 
 ### Prerequisites
 
-First, clone this project in you catkin workspace and do catkin_make
+First, clone this project in you catkin workspace and do catkin_make.
 Some packages are needed to run this project. Please run the following bash file, prevent at the project root.
 
 ```
