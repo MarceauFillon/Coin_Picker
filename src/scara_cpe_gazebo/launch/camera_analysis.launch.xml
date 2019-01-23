@@ -11,6 +11,6 @@
 
   <!-- Gazebo model spawner -->
   <node name="spawn_camera_model" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param camera_description -model camera -x 1.656235 -y -0.801825 -z 1.147801 -P 1.570000"/>
+        args="-urdf -param camera_description -model camera -x 1.395268 -y -0.801825 -z 1.235865 -P 1.570000"/>
 
 </launch>

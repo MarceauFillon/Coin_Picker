@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
 	circles = detect_circles()
 
-	position = {'x': 0.65	, 'y' : circles[0][1]}
+	position = {'x': circles[0][0] - 0.6	, 'y' : circles[0][1]}
 	quaternion = {'r1' : 0, 'r2' : 0.0, 'r3' : 0.0, 'r4' : 1.0}
 
 	rospy.loginfo("Go to (%s, %s) pose", position['x'], position['y'])

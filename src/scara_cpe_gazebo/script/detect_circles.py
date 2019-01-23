@@ -12,6 +12,7 @@ import numpy as np
 import message_filters
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
+from gazebo_msgs.srv import GetModelState
 from sensor_msgs.point_cloud2 import PointCloud2
 import sensor_msgs.point_cloud2 as pc2
 from cv_bridge import CvBridge, CvBridgeError
@@ -25,13 +26,11 @@ class ImageHandler:
 		self.circles_coordinates_in_image = []
 		self.circles_coordinates_in_world = []
 
-		self.coordinates_camera = [1.656235, -0.801825, 1.147801]
+		coordinates_model = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)  # Get the dynamic coordinates of the camera
+		coordinates_camera = coordinates_model('camera', 'world').pose.position
 
-		#coordinates_model = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)  # [1.656235, -0.801825, 1.147801]
-    	#coordinates_camera = coordinates_model('camera', 'world').pose.position
-
-    	#self.coordinates_camera = [coordinates_camera.x, coordinates_camera.y, coordinates_camera.z]
-    	
+		self.coordinates_camera = [coordinates_camera.x, coordinates_camera.y, coordinates_camera.z]
+		
 
 
 	def compute_coordinates(self):
@@ -46,23 +45,23 @@ class ImageHandler:
 
 
 	def image_conversion_to_openCV_image(self, data):
-	    try:
-	        self.image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+		try:
+			self.image = self.bridge.imgmsg_to_cv2(data, "bgr8")
 
-	    except CvBridgeError as e:
-	        print(e)
+		except CvBridgeError as e:
+			print(e)
 
 	def circle_detection(self):
-	  	try:
+		try:
 
 			img = self.image
-	        
+			
 			img = cv2.medianBlur(img, 3)
 
 			cimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
 			circles = cv2.HoughCircles(cimg,cv2.HOUGH_GRADIENT,1,20,
-	                            	   param1=50,param2=30,minRadius=0,maxRadius=0)
+									   param1=50,param2=30,minRadius=0,maxRadius=0)
 
 			circles = np.uint16(np.around(circles))
 
@@ -81,40 +80,43 @@ class ImageHandler:
 
 			rospy.loginfo(" ## Detection step : " + str(number_of_circles_found) + " circles found")
 
-	  	except:
-	  		print("Error in circle detection")
+		except:
+			print("Error in circle detection")
 
 	def get_coordinates(self, data):
-	    try:
-	        cloud_points = []
+		try:
+			cloud_points = []
 
-	        point_cloud = pc2.read_points(data, skip_nans=True, field_names=("x", "y", "z"))  # Get the coordinates of each pixel on the picture, x, y are the only important 1, z is the same = camera z
-	        point_cloud_coordinates_array = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(data)
-	        
-	        for circle_position in self.circles_coordinates_in_image:
-	            pixel_x = circle_position[0]
-	            pixel_y = circle_position[1]
+			point_cloud = pc2.read_points(data, skip_nans=True, field_names=("x", "y", "z"))  # Get the coordinates of each pixel on the picture, x, y are the only important 1, z is the same = camera z
+			point_cloud_coordinates_array = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(data)
 
-	            pcl_index = pixel_x*data.width + pixel_y  # The list of pixel is one dimensional, with height*width elements
+			for circle_position in self.circles_coordinates_in_image:
+				pixel_x = circle_position[0]
+				pixel_y = circle_position[1]
 
-	            coin_pos = self.coordinates_camera - point_cloud_coordinates_array[pcl_index] 
-	            self.circles_coordinates_in_world.append(coin_pos)
+				pcl_index = pixel_x*data.width + pixel_y  # The list of pixel is one dimensional, with height*width elements
 
-	        rospy.loginfo(" ## Coordinates computation step : coordinates found")
+				coin_pos = self.coordinates_camera - point_cloud_coordinates_array[pcl_index] 
+				self.circles_coordinates_in_world.append(coin_pos)
+				
+				rospy.loginfo(" # Found circle at (" + str(coin_pos[0]) + ", " + str(coin_pos[1]) + ") ##")
 
-	    except Exception, e:
-	        print(e)
+			rospy.loginfo(" ## Coordinates computation step : coordinates found")
+
+
+		except Exception, e:
+			print(e)
 
 def detect_circles(only_one_call = True):
 	ic = ImageHandler(only_one_call)
 
-  	#rospy.init_node('circle_detection', anonymous=True)
+	#rospy.init_node('circle_detection', anonymous=True)
 
-  	try:
+	try:
 		ic.compute_coordinates()
-  	except:
+	except:
 		print("Shutting down")
 
 	print("Hello")
-  	
-  	return ic.circles_coordinates_in_world
+	
+	return ic.circles_coordinates_in_world
