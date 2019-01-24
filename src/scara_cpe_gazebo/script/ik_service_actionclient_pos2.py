@@ -16,9 +16,9 @@ class Joint:
         def __init__(self):
             self.shoulder_1_joint=0
             self.shoulder_2_joint=0
-            self.Base_Link_LENGHT = 0.048
-            self.Link1_LENGTH = 0.128 - self.Base_Link_LENGHT
-            self.Link2_LENGTH = 0.175 - 0.128
+            self.Base_Link_LENGHT = 0.06
+            self.Link1_LENGTH = 0.08
+	    self.Link2_LENGTH = 0.047
             self.jta = actionlib.SimpleActionClient('/scara_cpe/scara_cpe_controller/follow_joint_trajectory', FollowJointTrajectoryAction)
             rospy.loginfo('Waiting for joint trajectory action')
             self.jta.wait_for_server()
